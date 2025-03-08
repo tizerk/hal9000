@@ -3,3 +3,7 @@ uvicorn
 ollama
 python-dotenv
 requests
+ipython
+coqui-tts
+scipy
+deepspeed
