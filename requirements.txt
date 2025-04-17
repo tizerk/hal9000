@@ -7,3 +7,4 @@ ipython
 coqui-tts
 scipy
 deepspeed
+faster-whisper
