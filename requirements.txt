@@ -8,3 +8,5 @@ coqui-tts
 scipy
 deepspeed
 faster-whisper
+pyaudio
+wave
