@@ -1,4 +1,4 @@
-fastapi
+fastapi[standard]
 uvicorn
 ollama
 python-dotenv
@@ -6,7 +6,10 @@ requests
 ipython
 coqui-tts
 scipy
-deepspeed
+# torch
+# torchaudio
 faster-whisper
 pyaudio
 wave
+# pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
+# pip install nvidia-cublas-cu12 nvidia-cudnn-cu12==9.*
