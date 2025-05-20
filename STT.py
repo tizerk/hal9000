@@ -14,6 +14,9 @@ model = WhisperModel(
 print("Opening Pyaudio stream...")
 p = pyaudio.PyAudio()
 
+input_device = p.get_default_input_device_info()["name"]
+print(f"Recording from: {input_device}")
+
 stream = p.open(
     format=pyaudio.paInt16,
     channels=1,
@@ -26,7 +29,6 @@ stream = p.open(
 
 def speech_to_text() -> str:
     stream.start_stream()
-    print(f"Recording from: {p.get_default_input_device_info()}")
     transcript = ""
     frames = []
     try:
@@ -34,17 +36,13 @@ def speech_to_text() -> str:
             data = stream.read(1024)
             frames.append(data)
     except KeyboardInterrupt:
-        print("Ending Recording...")
+        print("Stopping Input...")
         with wave.open("input_audio.wav", "wb") as wf:
             wf.setnchannels(1)
             wf.setsampwidth(p.get_sample_size(pyaudio.paInt16))
             wf.setframerate(16000)
             wf.writeframes(b"".join(frames))
         segments, _ = model.transcribe("input_audio.wav", beam_size=5, vad_filter=True)
-        with open("transcript.txt", "w") as t:
-            for segment in segments:
-                t.write(segment.text)
-                transcript += segment.text
     finally:
         print(f"Transcribed Text: {transcript}")
         os.remove("input_audio.wav")
