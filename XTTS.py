@@ -29,7 +29,7 @@ gpt_cond_latent, speaker_embedding = model.get_conditioning_latents(
     
     
 def text_to_speech(text) -> None:
-    print("TTS Inference...")
+    print("Running TTS Inference...")
     outputs = model.inference(
         text=text,
         language="en",
@@ -39,4 +39,4 @@ def text_to_speech(text) -> None:
     )
 
     Audio(data=outputs["wav"], rate=24000)
-    write("./output_audio.wav", 24000, outputs["wav"])
+    write("./XTTS/output_audio.wav", 24000, outputs["wav"])
