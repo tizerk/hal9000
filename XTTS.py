@@ -15,7 +15,8 @@ config = XttsConfig()
 config.load_json("./XTTS/config.json")
 model = Xtts.init_from_config(config)
 model.load_checkpoint(config, checkpoint_dir="./XTTS/")
-model.cuda()
+# Remove the following line if running on CPU
+# model.cuda()
 
 print("Computing speaker latents...")
 reference_audios = [
