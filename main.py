@@ -1,6 +1,6 @@
 import requests
-from STT import speech_to_text
 from XTTS import text_to_speech
+from STT import speech_to_text
 
 headers = {"Content-Type": "application/json"}
 server_url = "http://127.0.0.1:8000/generate?prompt="
