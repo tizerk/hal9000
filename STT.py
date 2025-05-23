@@ -43,6 +43,8 @@ def speech_to_text() -> str:
             wf.setframerate(16000)
             wf.writeframes(b"".join(frames))
         segments, _ = model.transcribe("input_audio.wav", beam_size=5, vad_filter=True)
+        for segment in segments:
+            transcript += segment.text
     finally:
         os.remove("input_audio.wav")
         stream.stop_stream()

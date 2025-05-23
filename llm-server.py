@@ -10,8 +10,7 @@ chat_messages = [
 
 @app.get("/test")
 def test():
-    response = "FastAPI Server is running"
-    return {response}
+    return "FastAPI Server is running"
 
 @app.post("/generate")
 def generate(prompt: str):
@@ -20,7 +19,7 @@ def generate(prompt: str):
         "content": prompt
     })
     response = ollama.chat(
-        model="qwen2.5",
+        model="qwen3:1.7b",
         messages=chat_messages,
     )
     chat_messages.append({

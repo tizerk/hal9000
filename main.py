@@ -7,10 +7,10 @@ server_url = "http://127.0.0.1:8000/generate?prompt="
 
 if __name__ == "__main__":
     try:
-        response = requests.post(f"http://127.0.0.1:8000/test", headers=headers)
+        requests.get(f"http://127.0.0.1:8000/test", headers=headers)
     except Exception:
         print("No response from Ollama, make sure to start the server before usage.")
-        
+    
     while True:
         user_input = speech_to_text()
         print("User said:\n\t" + user_input)
