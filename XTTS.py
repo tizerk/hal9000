@@ -14,7 +14,7 @@ print("Loading XTTS model...")
 config = XttsConfig()
 config.load_json("./XTTS/config.json")
 model = Xtts.init_from_config(config)
-model.load_checkpoint(config, checkpoint_dir="./XTTS/")
+model.load_checkpoint(config, checkpoint_dir="./XTTS/", use_deepspeed=True)
 # Remove the following line if running on CPU
 # model.cuda()
 
