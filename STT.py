@@ -5,13 +5,13 @@ import os
 
 print("Loading Whisper model...")
 # Run on GPU with FP16
-# model = WhisperModel(
-#     model_size_or_path="medium.en", device="cuda", compute_type="float16"
-# )
+model = WhisperModel(
+    model_size_or_path="medium.en", device="cuda", compute_type="float16"
+)
 # # or run on CPU with INT8
-model = WhisperModel(model_size_or_path="small.en", device="cpu", compute_type="int8")
+# model = WhisperModel(model_size_or_path="small.en", device="cpu", compute_type="int8")
 
-print("Opening Pyaudio stream...")
+print("Opening Pyaudio input stream...")
 p = pyaudio.PyAudio()
 
 input_device = p.get_default_input_device_info()

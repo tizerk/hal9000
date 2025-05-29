@@ -19,7 +19,7 @@ def generate(prompt: str):
         "content": prompt
     })
     response = ollama.chat(
-        model="qwen3:1.7b",
+        model="dolphin3:8b",
         messages=chat_messages,
     )
     chat_messages.append({
