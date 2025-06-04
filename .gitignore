@@ -172,7 +172,3 @@ cython_debug/
 
 # PyPI configuration file
 .pypirc
-
-# Large model files
-XTTS/dvae.pth
-XTTS/model.pth
