@@ -15,4 +15,5 @@ faster-whisper
 pyaudio
 wave
 spacy
+pynput
 # deepspeed
