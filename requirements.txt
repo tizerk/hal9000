@@ -1,6 +1,3 @@
-# pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu128
-# pip install nvidia-cublas-cu12 nvidia-cudnn-cu12==9.*
-
 fastapi[standard]
 uvicorn
 ollama
@@ -9,11 +6,14 @@ requests
 ipython
 coqui-tts
 scipy
-# torch
-# torchaudio
 faster-whisper
 pyaudio
-wave
 spacy
 pynput
 # deepspeed
+nvidia-cublas-cu12
+nvidia-cudnn-cu12==9.*
+-i https://download.pytorch.org/whl/cu128
+torch
+torchvision 
+torchaudio

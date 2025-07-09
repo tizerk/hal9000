@@ -1,6 +1,7 @@
 from faster_whisper import WhisperModel
 from pynput import keyboard
 import pyaudio
+import time
 import wave
 import os
 
@@ -57,9 +58,12 @@ class STT:
             wf.setsampwidth(self.p.get_sample_size(pyaudio.paInt16))
             wf.setframerate(16000)
             wf.writeframes(b"".join(self.frames))
+        start = time.perf_counter()
         segments, _ = self.model.transcribe("input_audio.wav", beam_size=5, vad_filter=True)
+        end = time.perf_counter()
         for segment in segments:
             transcript += segment.text
         os.remove("input_audio.wav")
+        print(f"Whisper processing time: {(end - start):.3f} seconds")
         self.stream.stop_stream()
         return transcript
