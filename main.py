@@ -9,8 +9,10 @@ if __name__ == "__main__":
     try:
         requests.get(f"http://127.0.0.1:8000/test", headers=headers)
     except Exception:
-        print("No response from Ollama, make sure both Ollama and the server are running.")
-    
+        print(
+            "No response from Ollama, make sure both Ollama and the server are running."
+        )
+
     tts_module = XTTS()
     stt_module = STT()
 
@@ -23,5 +25,6 @@ if __name__ == "__main__":
             tts_module.text_to_speech(llm_response.json()["response"])
             print("HAL9000 said:\n\t" + llm_response.json()["response"])
         except requests.exceptions.JSONDecodeError:
-            print("No response from Ollama, make sure both Ollama and the server are running.")
-
+            print(
+                "No response from Ollama, make sure both Ollama and the server are running."
+            )

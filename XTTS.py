@@ -4,6 +4,7 @@ import numpy as np
 from TTS.tts.configs.xtts_config import XttsConfig
 from TTS.tts.models.xtts import Xtts
 
+
 class XTTS:
     # Disable Deepspeed if running on a RTX 50-series card with Windows
     def __init__(self, config_path="./XTTS/config.json", deepspeed=False, cuda=True):
@@ -11,7 +12,9 @@ class XTTS:
         config = XttsConfig()
         config.load_json(config_path)
         self.model = Xtts.init_from_config(config)
-        self.model.load_checkpoint(config, checkpoint_dir="./XTTS/", use_deepspeed=deepspeed)
+        self.model.load_checkpoint(
+            config, checkpoint_dir="./XTTS/", use_deepspeed=deepspeed
+        )
         if cuda:
             self.model.cuda()
 
@@ -21,15 +24,16 @@ class XTTS:
             "./XTTS/samples/sample2.wav",
             "./XTTS/samples/sample3.wav",
         ]
-        self.gpt_cond_latent, self.speaker_embedding = self.model.get_conditioning_latents(
-            audio_path=self.reference_audios
+        self.gpt_cond_latent, self.speaker_embedding = (
+            self.model.get_conditioning_latents(audio_path=self.reference_audios)
         )
-    
-    
+
     def text_to_speech(self, text) -> None:
         print("Running TTS Inference...")
         self.p = pyaudio.PyAudio()
-        self.stream = self.p.open(format=pyaudio.paInt16, channels=1, rate=24000, output=True)
+        self.stream = self.p.open(
+            format=pyaudio.paInt16, channels=1, rate=24000, output=True
+        )
         start = time.perf_counter()
         outputs = self.model.inference(
             text=text,
