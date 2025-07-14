@@ -20,7 +20,7 @@ def test():
 def generate(prompt: str):
     start = time.perf_counter()
     chat_messages.append({"role": "user", "content": prompt})
-    response = ollama.chat(model="qwen3:latest", messages=chat_messages, think=False)
+    response = ollama.chat(model="llama3.2:latest", messages=chat_messages, think=False)
     chat_messages.append(
         {"role": "assistant", "content": response["message"]["content"]}
     )

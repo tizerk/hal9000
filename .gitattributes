@@ -1,2 +1,0 @@
-XTTS/dvae.pth filter=lfs diff=lfs merge=lfs -text
-XTTS/model.pth filter=lfs diff=lfs merge=lfs -text

@@ -5,13 +5,18 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.12, <3.13"
 dependencies = [
-    "coqui-tts>=0.26.2",
+    "einops-exts>=0.0.4",
     "fastapi[standard]>=0.116.0",
     "faster-whisper>=1.1.1",
     "ipython>=9.4.0",
+    "librosa>=0.11.0",
+    "munch>=4.0.0",
+    "nltk>=3.9.1",
+    "numba>=0.61.2",
     "nvidia-cublas-cu12>=12.6.4.1",
     "nvidia-cudnn-cu12==9.*",
     "ollama>=0.5.1",
+    "phonemizer>=3.3.0",
     "pyaudio>=0.2.14",
     "pynput>=1.8.1",
     "python-dotenv>=1.1.1",
@@ -21,6 +26,7 @@ dependencies = [
     "torch>=2.7.1",
     "torchaudio>=2.7.1",
     "torchvision>=0.22.1",
+    "transformers>=4.53.2",
     "uvicorn>=0.35.0",
 ]
 

@@ -1,6 +1,7 @@
 import requests
 from STT import STT
-from XTTS import XTTS
+from TTS import TTS
+
 
 headers = {"Content-Type": "application/json"}
 server_url = "http://127.0.0.1:8000/generate?prompt="
@@ -13,7 +14,7 @@ if __name__ == "__main__":
             "No response from Ollama, make sure both Ollama and the server are running."
         )
 
-    tts_module = XTTS()
+    tts_module = TTS()
     stt_module = STT()
 
     while True:
