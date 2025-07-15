@@ -1,31 +1,40 @@
+import sys
 import requests
+import logging
+
+logging.basicConfig(
+    level=logging.WARN,
+    format="%(levelname)s - %(name)s - %(message)s",
+    handlers=[logging.StreamHandler()],
+)
+logger = logging.getLogger(__name__)
+print("Starting HAL9000...")
 from STT import STT
 from TTS import TTS
 
-
 headers = {"Content-Type": "application/json"}
-server_url = "http://127.0.0.1:8000/generate?prompt="
+server_url = "http://127.0.0.1:8000"
 
 if __name__ == "__main__":
-    try:
-        requests.get(f"http://127.0.0.1:8000/test", headers=headers)
-    except Exception:
-        print(
-            "No response from Ollama, make sure both Ollama and the server are running."
-        )
 
     tts_module = TTS()
     stt_module = STT()
-
-    while True:
-        user_input = stt_module.speech_to_text()
-        print("User said:\n\t" + user_input)
-        print("Asking HAL...")
-        try:
-            llm_response = requests.post(server_url + user_input, headers=headers)
-            tts_module.text_to_speech(llm_response.json()["response"])
-            print("HAL9000 said:\n\t" + llm_response.json()["response"])
-        except requests.exceptions.JSONDecodeError:
-            print(
-                "No response from Ollama, make sure both Ollama and the server are running."
-            )
+    try:
+        while True:
+            user_input = stt_module.speech_to_text()
+            print(f"User said:\n\t" + user_input + "\n")
+            print("Asking HAL...\n")
+            try:
+                llm_response = requests.post(
+                    f"{server_url}/generate?prompt={user_input}", headers=headers
+                )
+                tts_module.text_to_speech(llm_response.json()["response"])
+                print("HAL9000 said:\n\t" + llm_response.json()["response"] + "\n")
+            except requests.exceptions.JSONDecodeError:
+                logger.error(
+                    "No response from Ollama. Make sure both Ollama and the FastAPI server are running."
+                )
+                sys.exit(1)
+    except KeyboardInterrupt:
+        print("User interrupted, exiting...")
+        sys.exit(0)

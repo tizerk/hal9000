@@ -1,4 +1,7 @@
 # IPA Phonemizer: https://github.com/bootphon/phonemizer
+import logging
+
+logger = logging.getLogger(__name__)
 
 _pad = "$"
 _punctuation = ';:,.!?¡¿—…"«»“” '
@@ -23,5 +26,5 @@ class TextCleaner:
             try:
                 indexes.append(self.word_index_dictionary[char])
             except KeyError:
-                print(text)
+                logger.exception(text)
         return indexes

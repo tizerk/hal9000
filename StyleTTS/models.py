@@ -4,7 +4,8 @@ import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn.utils import weight_norm, spectral_norm
+from torch.nn.utils.parametrizations import weight_norm
+from torch.nn.utils import spectral_norm
 
 from StyleTTS.Utils.ASR.models import ASRCNN
 from StyleTTS.Utils.JDC.model import JDCNet
@@ -273,7 +274,7 @@ class ResBlk1d(nn.Module):
         actv=nn.LeakyReLU(0.2),
         normalize=False,
         downsample="none",
-        dropout_p=0.2,
+        dropout_p=0,
     ):
         super().__init__()
         self.actv = actv
@@ -369,7 +370,7 @@ class TextEncoder(nn.Module):
                     ),
                     LayerNorm(channels),
                     actv,
-                    nn.Dropout(0.2),
+                    nn.Dropout(0),
                 )
             )
         # self.cnn = nn.Sequential(*self.cnn)
@@ -541,7 +542,7 @@ class AdaLayerNorm(nn.Module):
 
 class ProsodyPredictor(nn.Module):
 
-    def __init__(self, style_dim, d_hid, nlayers, max_dur=50, dropout=0.1):
+    def __init__(self, style_dim, d_hid, nlayers, max_dur=50, dropout=0):
         super().__init__()
 
         self.text_encoder = DurationEncoder(
@@ -640,7 +641,7 @@ class ProsodyPredictor(nn.Module):
 
 class DurationEncoder(nn.Module):
 
-    def __init__(self, sty_dim, d_model, nlayers, dropout=0.1):
+    def __init__(self, sty_dim, d_model, nlayers, dropout=0):
         super().__init__()
         self.lstms = nn.ModuleList()
         for _ in range(nlayers):

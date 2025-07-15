@@ -4,6 +4,16 @@ import pyaudio
 import time
 import wave
 import os
+import logging
+
+logger = logging.getLogger(__name__)
+
+import warnings
+
+warnings.filterwarnings(
+    "ignore",
+    message="dropout option adds dropout after all but last recurrent layer, so non-zero dropout expects num_layers greater than 1, but got dropout=0.2 and num_layers=1",
+)
 
 
 class STT:
@@ -12,16 +22,16 @@ class STT:
         self.recording = False
         self.frames = []
 
-        print("Loading Whisper model...")
+        logger.info("Loading Whisper model...")
         self.model = WhisperModel(
             model_size_or_path=model_size, device=device, compute_type=compute_type
         )
 
-        print("Opening Pyaudio input stream...")
+        logger.info("Opening Pyaudio input stream...")
         self.p = pyaudio.PyAudio()
 
         input_device = self.p.get_default_input_device_info()
-        print(f"Recording from: {input_device['name']}")
+        logger.info(f"Recording from: {input_device['name']}")
 
         self.stream = self.p.open(
             format=pyaudio.paInt16,
@@ -32,10 +42,11 @@ class STT:
             input_device_index=input_device["index"],
             start=False,
         )
+        print("Listening...\n")
 
     def _on_press(self, key):
         if key == keyboard.Key.esc:
-            print("Esc pressed, stopping input...")
+            print("Esc pressed, stopping input...\n")
             self.recording = False
             return False
 
@@ -67,6 +78,12 @@ class STT:
         for segment in segments:
             transcript += segment.text
         os.remove("input_audio.wav")
-        print(f"Whisper processing time: {(end - start):.3f} seconds")
+        logger.info(f"Whisper processing time: {(end - start):.3f} seconds")
         self.stream.stop_stream()
+        self.stream.close()
         return transcript
+
+    def close_stream(self) -> None:
+        self.stream.stop_stream()
+        self.stream.close()
+        self.p.terminate()
