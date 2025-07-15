@@ -21,6 +21,7 @@ dependencies = [
     "pynput>=1.8.1",
     "python-dotenv>=1.1.1",
     "requests>=2.32.4",
+    "rich>=13.9.4",
     "scipy>=1.16.0",
     "setuptools==80.8.0",
     "spacy>=3.8.7",

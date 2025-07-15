@@ -1,14 +1,18 @@
 import sys
 import requests
 import logging
+from rich.console import Console
+from rich.logging import RichHandler
+
+console = Console()
 
 logging.basicConfig(
     level=logging.WARN,
-    format="%(levelname)s - %(name)s - %(message)s",
-    handlers=[logging.StreamHandler()],
+    format="%(levelname)s - %(message)s",
+    handlers=[RichHandler(markup=True, rich_tracebacks=True)],
 )
 logger = logging.getLogger(__name__)
-print("Starting HAL9000...")
+console.print("Starting HAL9000...", style="bold green")
 from STT import STT
 from TTS import TTS
 
@@ -22,19 +26,26 @@ if __name__ == "__main__":
     try:
         while True:
             user_input = stt_module.speech_to_text()
-            print(f"User said:\n\t" + user_input + "\n")
-            print("Asking HAL...\n")
+            console.print(
+                f"[bold green]User said:[/bold green]\n\t[i]{user_input}[/i]\n"
+            )
+            console.print("Asking HAL...\n", style="bold green")
             try:
                 llm_response = requests.post(
                     f"{server_url}/generate?prompt={user_input}", headers=headers
                 )
                 tts_module.text_to_speech(llm_response.json()["response"])
-                print("HAL9000 said:\n\t" + llm_response.json()["response"] + "\n")
+                console.print(
+                    f"[bold green]HAL9000 said:[/bold green]\n\t[i]{llm_response.json()["response"]}[/i]\n"
+                )
             except requests.exceptions.JSONDecodeError:
+                logger.error("No response from Ollama. Make sure Ollama is running.")
+                sys.exit(1)
+            except requests.exceptions.ConnectionError:
                 logger.error(
-                    "No response from Ollama. Make sure both Ollama and the FastAPI server are running."
+                    "No response from the FastAPI server.  Make sure it's running with `uv run fastapi run llm-server.py`."
                 )
                 sys.exit(1)
     except KeyboardInterrupt:
-        print("User interrupted, exiting...")
+        console.print("User interrupted, [i]exiting...[/i]", style="bold red")
         sys.exit(0)

@@ -5,8 +5,10 @@ import time
 import wave
 import os
 import logging
+from rich.console import Console
 
 logger = logging.getLogger(__name__)
+console = Console()
 
 import warnings
 
@@ -42,11 +44,11 @@ class STT:
             input_device_index=input_device["index"],
             start=False,
         )
-        print("Listening...\n")
+        console.print("Listening...\n", style="bold green")
 
     def _on_press(self, key):
         if key == keyboard.Key.esc:
-            print("Esc pressed, stopping input...\n")
+            console.print("Esc pressed, stopping input...\n", style="bold green")
             self.recording = False
             return False
 
