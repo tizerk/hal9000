@@ -14,12 +14,13 @@ class TTS:
         logger.info("Loading StyleTTS reference...")
         self.voice = msinference.compute_style(f"./StyleTTS/voices/{character}.wav")
 
-    def text_to_speech(self, text) -> None:
-        logger.info("Running TTS Inference...")
         self.p = pyaudio.PyAudio()
         self.stream = self.p.open(
             format=pyaudio.paInt16, channels=1, rate=24000, output=True
         )
+
+    def text_to_speech(self, text) -> None:
+        logger.info("Running TTS Inference...")
         start = time.perf_counter()
         outputs = synthesize(text=text, voice=self.voice, lngsteps=15)
         end = time.perf_counter()
@@ -29,10 +30,6 @@ class TTS:
         wav_data = wav_data / np.max(np.abs(wav_data))
         audio_int16 = (wav_data * 32767).astype(np.int16)
         self.stream.write(audio_int16.tobytes())
-
-        self.stream.stop_stream()
-        self.stream.close()
-        self.p.terminate()
 
     def close_stream(self) -> None:
         self.stream.stop_stream()

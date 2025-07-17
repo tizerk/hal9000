@@ -4,6 +4,7 @@ import pyaudio
 import time
 import wave
 import os
+import numpy as np
 import logging
 from rich.console import Console
 
@@ -42,13 +43,17 @@ class STT:
             input=True,
             frames_per_buffer=1024,
             input_device_index=input_device["index"],
-            start=False,
         )
-        console.print("Listening...\n", style="bold green")
+        console.print(
+            "Now listening... Press [i]Spacebar[/i] to stop recording.\n",
+            style="bold green",
+        )
 
     def _on_press(self, key):
-        if key == keyboard.Key.esc:
-            console.print("Esc pressed, stopping input...\n", style="bold green")
+        if key == keyboard.Key.space:
+            console.print(
+                "[i]Spacebar[/i] pressed, stopping input...\n", style="bold green"
+            )
             self.recording = False
             return False
 
@@ -56,7 +61,6 @@ class STT:
         self.recording = True
         self.frames = []
         transcript = ""
-        self.stream.start_stream()
 
         listener = keyboard.Listener(on_press=self._on_press)
         listener.start()
@@ -67,22 +71,16 @@ class STT:
 
         listener.join()
 
-        with wave.open("input_audio.wav", "wb") as wf:
-            wf.setnchannels(1)
-            wf.setsampwidth(self.p.get_sample_size(pyaudio.paInt16))
-            wf.setframerate(16000)
-            wf.writeframes(b"".join(self.frames))
-        start = time.perf_counter()
-        segments, _ = self.model.transcribe(
-            "input_audio.wav", beam_size=5, vad_filter=True
+        audio_data = b"".join(self.frames)
+        audio_np = (
+            np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
         )
-        end = time.perf_counter()
+        start = time.perf_counter()
+        segments, _ = self.model.transcribe(audio_np, beam_size=5, vad_filter=True)
         for segment in segments:
             transcript += segment.text
-        os.remove("input_audio.wav")
+        end = time.perf_counter()
         logger.info(f"Whisper processing time: {(end - start):.3f} seconds")
-        self.stream.stop_stream()
-        self.stream.close()
         return transcript
 
     def close_stream(self) -> None:

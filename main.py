@@ -7,12 +7,12 @@ from rich.logging import RichHandler
 console = Console()
 
 logging.basicConfig(
-    level=logging.WARN,
+    level=logging.ERROR,
     format="%(levelname)s - %(message)s",
     handlers=[RichHandler(markup=True, rich_tracebacks=True)],
 )
 logger = logging.getLogger(__name__)
-console.print("Starting HAL9000...", style="bold green")
+console.print("Starting HAL9000...\n", style="bold green")
 from STT import STT
 from TTS import TTS
 
@@ -49,3 +49,6 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         console.print("User interrupted, [i]exiting...[/i]", style="bold red")
         sys.exit(0)
+    finally:
+        tts_module.close_stream()
+        stt_module.close_stream()
