@@ -173,4 +173,4 @@ cython_debug/
 # PyPI configuration file
 .pypirc
 
-StyleTTS/Models/hal9000.pth
+src/StyleTTS/Models/hal9000.pth
