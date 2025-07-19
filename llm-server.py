@@ -2,8 +2,14 @@ from fastapi import FastAPI
 import time
 import ollama
 import logging
+from rich.logging import RichHandler
 
 logger = logging.getLogger(__name__)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(levelname)s - %(message)s",
+    handlers=[RichHandler(markup=True, rich_tracebacks=True)],
+)
 
 app = FastAPI()
 
@@ -28,4 +34,6 @@ def generate(prompt: str):
     )
     end = time.perf_counter()
     logger.info(f"LLM response time: {(end - start):.3f} seconds")
-    return {"response": response["message"]["content"]}
+    return {
+        "response": response["message"]["content"].replace('"', "").replace("...", ",")
+    }

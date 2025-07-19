@@ -22,7 +22,7 @@ class TTS:
     def text_to_speech(self, text) -> None:
         logger.info("Running TTS Inference...")
         start = time.perf_counter()
-        outputs = synthesize(text=text, voice=self.voice, lngsteps=15)
+        outputs = synthesize(text=text, voice=self.voice, lngsteps=20)
         end = time.perf_counter()
         logger.info(f"TTS inference time: {(end - start):.3f} seconds")
 

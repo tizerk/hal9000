@@ -2,8 +2,6 @@ from faster_whisper import WhisperModel
 from pynput import keyboard
 import pyaudio
 import time
-import wave
-import os
 import numpy as np
 import logging
 from rich.console import Console
@@ -20,7 +18,6 @@ warnings.filterwarnings(
 
 
 class STT:
-    # or run on CPU with INT8 (self, model_size="small.en", device="cpu", compute_type="int8")
     def __init__(self, model_size="medium.en", device="cuda", compute_type="float16"):
         self.recording = False
         self.frames = []
@@ -44,10 +41,6 @@ class STT:
             frames_per_buffer=1024,
             input_device_index=input_device["index"],
         )
-        console.print(
-            "Now listening... Press [i]Spacebar[/i] to stop recording.\n",
-            style="bold green",
-        )
 
     def _on_press(self, key):
         if key == keyboard.Key.space:
@@ -58,6 +51,10 @@ class STT:
             return False
 
     def speech_to_text(self) -> str:
+        console.print(
+            "Now listening... Press [i]Spacebar[/i] to stop recording.\n",
+            style="bold green",
+        )
         self.recording = True
         self.frames = []
         transcript = ""
@@ -76,7 +73,7 @@ class STT:
             np.frombuffer(audio_data, dtype=np.int16).astype(np.float32) / 32768.0
         )
         start = time.perf_counter()
-        segments, _ = self.model.transcribe(audio_np, beam_size=5, vad_filter=True)
+        segments, _ = self.model.transcribe(audio_np, beam_size=1, vad_filter=True)
         for segment in segments:
             transcript += segment.text
         end = time.perf_counter()
