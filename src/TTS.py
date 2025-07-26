@@ -2,6 +2,7 @@ import pyaudio
 import time
 import numpy as np
 import logging
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -12,7 +13,9 @@ from StyleTTS.app import synthesize
 class TTS:
     def __init__(self, character="hal9000"):
         logger.info("Loading StyleTTS reference...")
-        self.voice = msinference.compute_style(f"./StyleTTS/voices/{character}.wav")
+        self.voice = msinference.compute_style(
+            f"{Path(__file__).parent}/StyleTTS/voices/{character}.wav"
+        )
 
         self.p = pyaudio.PyAudio()
         self.stream = self.p.open(

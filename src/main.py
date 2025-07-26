@@ -28,7 +28,7 @@ from STT import STT
 from TTS import TTS
 
 headers = {"Content-Type": "application/json"}
-server_url = "http://127.0.0.1:8000"
+server_url = "http://127.0.0.1:8001"
 
 if __name__ == "__main__":
     tts_module = TTS(character="hal9000")
@@ -51,18 +51,22 @@ if __name__ == "__main__":
             console.print("Asking HAL...\n", style="bold green")
             try:
                 llm_response = requests.post(
-                    f"{server_url}/generate?prompt={user_input}", headers=headers
+                    f"{server_url}/query",
+                    json={"query": user_input},
+                    headers=headers,
                 )
+                print(llm_response.json())
+                response_text = llm_response.json()["response"]
                 console.print(
-                    f"[bold green]HAL9000 said:[/bold green]\n\t[i]{llm_response.json()["response"]}[/i]\n"
+                    f"[bold green]HAL9000 said:[/bold green]\n\t[i]{response_text}[/i]\n"
                 )
-                tts_module.text_to_speech(llm_response.json()["response"])
+                tts_module.text_to_speech(response_text)
             except requests.exceptions.JSONDecodeError:
                 logger.error("No response from Ollama. Make sure Ollama is running.")
                 sys.exit(1)
             except requests.exceptions.ConnectionError:
                 logger.error(
-                    "No response from the FastAPI server.  Make sure it's running with `uv run fastapi run llm-server.py`."
+                    "No response from the FastAPI servers.  Make sure they are running on ports 8000 and 8001."
                 )
                 sys.exit(1)
     except KeyboardInterrupt:

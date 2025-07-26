@@ -10,6 +10,7 @@ dependencies = [
     "faster-whisper>=1.1.1",
     "ipython>=9.4.0",
     "librosa>=0.11.0",
+    "mcp[cli]>=1.12.0",
     "munch>=4.0.0",
     "nltk>=3.9.1",
     "numba>=0.61.2",
@@ -30,6 +31,8 @@ dependencies = [
     "torchvision>=0.22.1",
     "transformers>=4.53.2",
     "uvicorn>=0.35.0",
+    "httpx>=0.28.1",
+    "fastapi-mcp>=0.3.7",
 ]
 
 [[tool.uv.index]]
