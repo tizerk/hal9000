@@ -23,8 +23,12 @@ async def lifespan(app: FastAPI):
     """On server startup, connect to the MCP tool server.
     On server shutdown, clean up resources."""
     try:
-        server_script = f"{Path(__file__).parent}\\mcp_servers\\mcp_weather\\server.py"
-        await mcp_client.connect_to_server(server_script)
+        mcp_servers_scripts = [
+            f"{Path(__file__).parent}\\mcp_servers\\mcp_weather\\server.py",
+            f"{Path(__file__).parent}\\mcp_servers\\mcp_time\\server.py",
+            f"{Path(__file__).parent}\\mcp_servers\\mcp_websearch\\server.py",
+        ]
+        await mcp_client.connect_to_mcp_servers(mcp_servers_scripts)
     except Exception as e:
         logger.error(f"Could not connect to MCP tool server on startup: {e}")
 
@@ -38,8 +42,8 @@ app = FastAPI(title="MCP Controller", lifespan=lifespan)
 
 @app.post("/query")
 async def query(query: Annotated[str, Body(embed=True)]):
-    """Receives a query, orchestrates tool/LLM calls, and returns the final response."""
-    if not mcp_client.session:
+    """Receives a query, manages calls to the client, and returns the final response."""
+    if not mcp_client.sessions:
         raise HTTPException(status_code=503, detail="MCP Tool Server not connected")
     try:
         final_response = await mcp_client.process_query(query)

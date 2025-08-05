@@ -19,6 +19,13 @@ warnings.filterwarnings(
 
 class STT:
     def __init__(self, model_size="medium.en", device="cuda", compute_type="float16"):
+        """Speech-to-Text module that records audio from the default audio device and transcribes it with Faster Whisper.
+
+        Args:
+            model_size (str, optional): Whisper model to be used. Larger models are more accurate, but slower. Defaults to "medium.en".
+            device (str, optional): Device to be used for transcription. Defaults to "cuda".
+            compute_type (str, optional): Compute type to be used for transcription. Float16/32 are more precise, but slower. Defaults to "float16".
+        """
         self.recording = False
         self.frames = []
 
@@ -43,6 +50,14 @@ class STT:
         )
 
     def _on_press(self, key):
+        """Stops recording audio when the user presses the spacebar.
+
+        Args:
+            key: The key that has been pressed
+
+        Returns:
+            False if Spacebar has been pressed
+        """
         if key == keyboard.Key.space:
             console.print(
                 "[i]Spacebar[/i] pressed, stopping input...\n", style="bold green"
@@ -51,6 +66,11 @@ class STT:
             return False
 
     def speech_to_text(self) -> str:
+        """Manages audio recording and transcribes it to English with Faster Whisper.
+
+        Returns:
+            str: Transcript of the recorded audio data
+        """
         console.print(
             "Now listening... Press [i]Spacebar[/i] to stop recording.\n",
             style="bold green",
@@ -81,6 +101,7 @@ class STT:
         return transcript
 
     def close_stream(self) -> None:
+        """Closes Pyaudio stream."""
         self.stream.stop_stream()
         self.stream.close()
         self.p.terminate()

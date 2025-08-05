@@ -16,6 +16,8 @@ logger = logging.getLogger(__name__)
 
 
 class MismatchFilter(logging.Filter):
+    """Filter for hiding unnecessary warning from phonemizer library"""
+
     def filter(self, record):
         return "words count mismatch" not in record.getMessage()
 
@@ -55,7 +57,6 @@ if __name__ == "__main__":
                     json={"query": user_input},
                     headers=headers,
                 )
-                print(llm_response.json())
                 response_text = llm_response.json()["response"]
                 console.print(
                     f"[bold green]HAL9000 said:[/bold green]\n\t[i]{response_text}[/i]\n"
@@ -66,7 +67,7 @@ if __name__ == "__main__":
                 sys.exit(1)
             except requests.exceptions.ConnectionError:
                 logger.error(
-                    "No response from the FastAPI servers.  Make sure they are running on ports 8000 and 8001."
+                    "No response from the FastAPI servers.  Make sure they are running."
                 )
                 sys.exit(1)
     except KeyboardInterrupt:
