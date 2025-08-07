@@ -3,7 +3,7 @@ from fastapi import FastAPI, Body, HTTPException
 from typing import Annotated
 from contextlib import asynccontextmanager
 
-from client import MCPOllamaClient
+from .client import MCPOllamaClient
 
 import logging
 from rich.logging import RichHandler

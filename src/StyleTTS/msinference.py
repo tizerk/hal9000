@@ -28,12 +28,12 @@ import torchaudio
 import librosa
 from nltk.tokenize import word_tokenize
 
-from StyleTTS.models import load_ASR_models
-from StyleTTS.models import load_F0_models
-from StyleTTS.models import build_model
+from ..StyleTTS.models import load_ASR_models
+from ..StyleTTS.models import load_F0_models
+from ..StyleTTS.models import build_model
 
-from StyleTTS.utils import recursive_munch
-from StyleTTS.text_utils import TextCleaner
+from ..StyleTTS.utils import recursive_munch
+from ..StyleTTS.text_utils import TextCleaner
 
 textclenaer = TextCleaner()
 
@@ -99,7 +99,7 @@ F0_path = f"{dir}/{config.get("F0_path", False)}"
 pitch_extractor = load_F0_models(F0_path)
 
 # load BERT model
-from StyleTTS.Utils.PLBERT.util import load_plbert
+from ..StyleTTS.Utils.PLBERT.util import load_plbert
 
 BERT_path = f"{dir}/{config.get("PLBERT_dir", False)}"
 plbert = load_plbert(BERT_path)
@@ -131,7 +131,7 @@ for key in model:
 #                 _load(params[key], model[key])
 _ = [model[key].eval() for key in model]
 
-from StyleTTS.Modules.diffusion.sampler import (
+from ..StyleTTS.Modules.diffusion.sampler import (
     DiffusionSampler,
     ADPM2Sampler,
     KarrasSchedule,

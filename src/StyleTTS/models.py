@@ -7,14 +7,14 @@ import torch.nn.functional as F
 from torch.nn.utils.parametrizations import weight_norm
 from torch.nn.utils import spectral_norm
 
-from StyleTTS.Utils.ASR.models import ASRCNN
-from StyleTTS.Utils.JDC.model import JDCNet
+from ..StyleTTS.Utils.ASR.models import ASRCNN
+from ..StyleTTS.Utils.JDC.model import JDCNet
 
-from StyleTTS.Modules.diffusion.sampler import KDiffusion, LogNormalDistribution
-from StyleTTS.Modules.diffusion.modules import Transformer1d, StyleTransformer1d
-from StyleTTS.Modules.diffusion.diffusion import AudioDiffusionConditional
+from ..StyleTTS.Modules.diffusion.sampler import KDiffusion, LogNormalDistribution
+from ..StyleTTS.Modules.diffusion.modules import Transformer1d, StyleTransformer1d
+from ..StyleTTS.Modules.diffusion.diffusion import AudioDiffusionConditional
 
-from StyleTTS.Modules.discriminators import (
+from ..StyleTTS.Modules.discriminators import (
     MultiPeriodDiscriminator,
     MultiResSpecDiscriminator,
     WavLMDiscriminator,
@@ -751,7 +751,7 @@ def build_model(args, text_aligner, pitch_extractor, bert):
     assert args.decoder.type in ["istftnet", "hifigan"], "Decoder type unknown"
 
     if args.decoder.type == "istftnet":
-        from StyleTTS.Modules.istftnet import Decoder
+        from ..StyleTTS.Modules.istftnet import Decoder
 
         decoder = Decoder(
             dim_in=args.hidden_dim,
@@ -766,7 +766,7 @@ def build_model(args, text_aligner, pitch_extractor, bert):
             gen_istft_hop_size=args.decoder.gen_istft_hop_size,
         )
     else:
-        from StyleTTS.Modules.hifigan import Decoder
+        from ..StyleTTS.Modules.hifigan import Decoder
 
         decoder = Decoder(
             dim_in=args.hidden_dim,
