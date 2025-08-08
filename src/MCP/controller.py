@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from pathlib import Path
 from fastapi import FastAPI, Body, HTTPException
 from typing import Annotated
@@ -15,23 +17,33 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-mcp_client = MCPOllamaClient(server_url="http://127.0.0.1:8000")
+load_dotenv()
+USING_TOOLS = os.getenv("USING_TOOLS", "False").lower() in ("true", "1", "t")
+
+
+mcp_client = MCPOllamaClient(
+    server_url="http://127.0.0.1:8000", using_tools=USING_TOOLS
+)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """On server startup, connect to the MCP tool server.
     On server shutdown, clean up resources."""
-    try:
-        mcp_servers_scripts = [
-            f"{Path(__file__).parent}\\mcp_servers\\mcp_weather\\server.py",
-            f"{Path(__file__).parent}\\mcp_servers\\mcp_time\\server.py",
-            f"{Path(__file__).parent}\\mcp_servers\\mcp_websearch\\server.py",
-        ]
-        await mcp_client.connect_to_mcp_servers(mcp_servers_scripts)
-    except Exception as e:
-        logger.error(f"Could not connect to MCP tool server on startup: {e}")
 
+    if USING_TOOLS:
+        logger.info("Tool mode is enabled. Connecting to MCP servers...")
+        try:
+            mcp_servers_scripts = [
+                f"{Path(__file__).parent}/mcp_servers/mcp_weather/server.py",
+                f"{Path(__file__).parent}/mcp_servers/mcp_time/server.py",
+                f"{Path(__file__).parent}/mcp_servers/mcp_websearch/server.py",
+            ]
+            await mcp_client.connect_to_mcp_servers(mcp_servers_scripts)
+        except Exception as e:
+            logger.error(f"Could not connect to MCP tool server on startup: {e}")
+    else:
+        logger.info("Tool mode is disabled. Skipping MCP server connections.")
     yield
 
     await mcp_client.cleanup()
@@ -43,7 +55,7 @@ app = FastAPI(title="MCP Controller", lifespan=lifespan)
 @app.post("/query")
 async def query(query: Annotated[str, Body(embed=True)]):
     """Receives a query, manages calls to the client, and returns the final response."""
-    if not mcp_client.sessions:
+    if not mcp_client.sessions and mcp_client.using_tools:
         raise HTTPException(status_code=503, detail="MCP Tool Server not connected")
     try:
         final_response = await mcp_client.process_query(query)

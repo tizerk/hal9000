@@ -9,8 +9,8 @@ from typing import Tuple
 logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
-from .StyleTTS import msinference
-from .StyleTTS.app import synthesize
+from StyleTTS import msinference
+from StyleTTS.app import synthesize
 
 
 class TTS:

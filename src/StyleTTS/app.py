@@ -1,6 +1,6 @@
 # Using code from StyleTTS2FineTune: https://github.com/IIEleven11/StyleTTS2FineTune
 import re
-from ..StyleTTS import msinference
+from StyleTTS import msinference
 import numpy as np
 
 

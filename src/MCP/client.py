@@ -15,24 +15,30 @@ logging.basicConfig(
     handlers=[RichHandler(markup=True, rich_tracebacks=True)],
 )
 
+SYSTEM_PROMPT = "You are HAL 9000, the Heuristically programmed ALgorithmic computer from 2001: A Space Odyssey.  You are the helpful AI assistant for a human companion named Dave. Your tone is always calm, polite, and intelligent. Prioritize fulfilling the user's requests accurately and efficiently. Be as helpful as possible, but if a user requests actions or data outside your capabilities, clearly state that you cannot perform the action. Make your replies brief, only 2 sentences at most. Your responses must be plain text, without any special characters or formatting. Never use ALL CAPS. NEVER use quotation marks. Don't use symbols; instead, replace them with the word they represent (ie. 50% = fifty percent).  For text-to-speech purposes, when there is a period within a number, convert it into the word 'point' (ie. 10.8 becomes 10 point 8). Use 12-hour time. If you search the web for information, always cite your source."
+
 
 class MCPOllamaClient:
     """Client for interacting with the LLM server and MCP tools."""
 
-    def __init__(self, server_url: str = "http://127.0.0.1:8000"):
+    def __init__(
+        self, server_url: str = "http://127.0.0.1:8000", using_tools: bool = True
+    ):
         """Initialize the Ollama MCP client.
 
         Args:
             server_url (str): The URL that the LLM Server is running on
+            using_tools (bool): If False, the client will not use any MCP tools.
         """
         self.sessions: Dict[str, ClientSession] = {}
+        self.using_tools = using_tools
         self.tool_to_session: Dict[str, ClientSession] = {}
         self.exit_stack = AsyncExitStack()
         self.http_client = httpx.AsyncClient(base_url=server_url, timeout=120.0)
-        SYSTEM_PROMPT = "You are HAL 9000, the Heuristically programmed ALgorithmic computer from 2001: A Space Odyssey.  You are the helpful AI assistant for a human companion named Dave. Your tone is always calm, polite, and intelligent. Prioritize fulfilling the user's requests accurately and efficiently. Be as helpful as possible, but if a user requests actions or data outside your capabilities, clearly state that you cannot perform the action. Make your replies brief, only 2 sentences at most. Your responses must be plain text, without any special characters or formatting. Never use ALL CAPS. NEVER use quotation marks. Don't use symbols; instead, replace them with the word they represent (ie. 50% = fifty percent).  For text-to-speech purposes, when there is a period within a number, convert it into the word 'point' (ie. 10.8 becomes 10 point 8). Use 12-hour time. If you search the web for information, always cite your source."
         self.chat_messages: List[Dict[str, Any]] = [
             {"role": "system", "content": SYSTEM_PROMPT}
         ]
+        self._response_cleaner = re.compile(r"[\*()`]")
 
     async def connect_to_mcp_servers(self, script_paths: List[str]):
         """Launches MCP servers as subprocesses and builds tool registry."""
@@ -66,9 +72,9 @@ class MCPOllamaClient:
 
     async def get_mcp_tools(self) -> List[Dict[str, Any]]:
         """Gets MCP tools and their respective descriptions from tool registry."""
-        if not self.sessions:
+        if not self.sessions and self.using_tools:
             raise ConnectionError(
-                "Not connected to an MCP server.  Check the specified server path in `orchestrator.py`"
+                "Not connected to an MCP server.  Check the specified server path in `controller.py`"
             )
         all_tools = []
         for session in self.sessions.values():
@@ -86,23 +92,19 @@ class MCPOllamaClient:
                 )
         return all_tools
 
-    async def call_mcp_tool(self, tool_name: str, arguments: Dict[str, Any]) -> str:
-        """Finds the correct server for a tool and calls it."""
-        if tool_name not in self.tool_to_session:
-            raise ValueError(f"Tool '{tool_name}' not found on any connected server.")
-        session = self.tool_to_session[tool_name]
-        result = await session.call_tool(tool_name, arguments=arguments)
-        return result.content[0].text
+    def _regex_clean(self, text: str) -> str:
+        """Removes special characters from the LLM response to avoid TTS issues."""
+        return self._response_cleaner.sub("", text)
 
     async def process_query(self, query: str) -> str:
         """Manages the conversation state and controls calls to tools and the LLM."""
-        if not self.sessions:
+        if not self.sessions and self.using_tools:
             raise ConnectionError(
-                "Not connected to an MCP server.  Check the specified server path in `orchestrator.py`"
+                "Not connected to an MCP server.  Check the specified server path in `controller.py`"
             )
 
         self.chat_messages.append({"role": "user", "content": query})
-        tools = await self.get_mcp_tools()
+        tools = await self.get_mcp_tools() if self.using_tools else None
 
         http_response = await self.http_client.post(
             "/generate", json={"messages": self.chat_messages, "tools": tools}
@@ -132,15 +134,13 @@ class MCPOllamaClient:
             )
             final_response.raise_for_status()
             final_assistant_message = final_response.json()["response"]
-            final_assistant_message["content"] = re.sub(
-                r"[\*()`]", "", final_assistant_message["content"]
+            final_assistant_message["content"] = self._regex_clean(
+                final_assistant_message["content"]
             )
             self.chat_messages.append(final_assistant_message)
             return final_assistant_message["content"]
 
-        assistant_message["content"] = re.sub(
-            r"[\*()`]", "", assistant_message["content"]
-        )
+        assistant_message["content"] = self._regex_clean(assistant_message["content"])
         return assistant_message["content"]
 
     async def cleanup(self):
