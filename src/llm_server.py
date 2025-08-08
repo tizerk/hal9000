@@ -1,15 +1,18 @@
+import os
+from dotenv import load_dotenv
 from fastapi import FastAPI
 from typing import List, Dict, Any
 import ollama
 import logging
 from rich.logging import RichHandler
 
-logger = logging.getLogger(__name__)
+load_dotenv()
 logging.basicConfig(
-    level=logging.INFO,
     format="%(levelname)s - %(message)s",
     handlers=[RichHandler(markup=True, rich_tracebacks=True)],
 )
+logger = logging.getLogger(__name__)
+logger.setLevel(os.getenv("LOG_LEVEL", "INFO"))
 
 app = FastAPI()
 

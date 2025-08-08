@@ -1,13 +1,22 @@
+import os
+from dotenv import load_dotenv
 import pyaudio
 import time
 import numpy as np
 import logging
 from pathlib import Path
 from typing import Tuple
+from rich.logging import RichHandler
 
+load_dotenv()
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(
+    format="%(levelname)s - %(message)s",
+    handlers=[RichHandler(markup=True, rich_tracebacks=True)],
+)
+logger.setLevel(os.getenv("LOG_LEVEL", "INFO"))
+
 
 from StyleTTS import msinference
 from StyleTTS.app import synthesize

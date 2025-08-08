@@ -13,10 +13,10 @@ WEATHER_API_KEY = os.getenv("WEATHER_API_KEY")
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
-    level=logging.INFO,
     format="%(levelname)s - %(message)s",
     handlers=[RichHandler(markup=True, rich_tracebacks=True)],
 )
+logger.setLevel(os.getenv("LOG_LEVEL", "INFO"))
 
 mcp = FastMCP(
     name="WeatherMCP",

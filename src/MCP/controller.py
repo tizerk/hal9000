@@ -16,6 +16,7 @@ logging.basicConfig(
     handlers=[RichHandler(markup=True, rich_tracebacks=True)],
 )
 logger = logging.getLogger(__name__)
+logger.setLevel(os.getenv("LOG_LEVEL", "INFO"))
 
 load_dotenv()
 USING_TOOLS = os.getenv("USING_TOOLS", "False").lower() in ("true", "1", "t")

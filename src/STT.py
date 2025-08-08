@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from faster_whisper import WhisperModel
 from pynput import keyboard
 import pyaudio
@@ -5,8 +7,16 @@ import time
 import numpy as np
 import logging
 from rich.console import Console
+from rich.logging import RichHandler
 
+load_dotenv()
+
+logging.basicConfig(
+    format="%(levelname)s - %(message)s",
+    handlers=[RichHandler(markup=True, rich_tracebacks=True)],
+)
 logger = logging.getLogger(__name__)
+logger.setLevel(os.getenv("LOG_LEVEL", "INFO"))
 console = Console()
 
 import warnings

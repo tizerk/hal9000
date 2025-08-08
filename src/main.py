@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 import sys
 import torch
 import requests
@@ -5,14 +7,15 @@ import logging
 from rich.console import Console
 from rich.logging import RichHandler
 
+load_dotenv()
 console = Console()
 
 logging.basicConfig(
-    level=logging.INFO,
     format="%(levelname)s - %(message)s",
     handlers=[RichHandler(markup=True, rich_tracebacks=True)],
 )
 logger = logging.getLogger(__name__)
+logger.setLevel(os.getenv("LOG_LEVEL", "INFO"))
 
 
 class MismatchFilter(logging.Filter):
