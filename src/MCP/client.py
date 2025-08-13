@@ -24,12 +24,12 @@ SYSTEM_PROMPT = "You are HAL 9000, the Heuristically programmed ALgorithmic comp
 
 
 class MCPOllamaClient:
-    """Client for interacting with the LLM server and MCP tools."""
+    """Client for interacting with the Ollama server and MCP tools."""
 
     def __init__(
         self, server_url: str = "http://127.0.0.1:8000", using_tools: bool = True
     ):
-        """Initialize the Ollama MCP client.
+        """Initialize the Ollama/MCP client.
 
         Args:
             server_url (str): The URL that the LLM Server is running on

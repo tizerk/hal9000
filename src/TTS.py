@@ -95,7 +95,7 @@ class TTS:
         logger.info("Playing audio...")
         try:
             while self.stream.is_active():
-                time.sleep(0.1)
+                time.sleep(0.05)
         except KeyboardInterrupt:
             logger.info("Playback interrupted by user.")
         finally:

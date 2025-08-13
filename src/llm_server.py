@@ -32,7 +32,7 @@ def generate(
     and returns the assistant's response.
     """
     response = ollama.chat(
-        model="qwen3:latest", messages=messages, tools=tools, think=False
+        model="qwen3:latest", messages=messages, tools=tools, think=False, keep_alive=-1
     )
 
     return {"response": response["message"]}
