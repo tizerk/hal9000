@@ -3,10 +3,10 @@ from unittest.mock import patch, AsyncMock, MagicMock
 
 pytestmark = pytest.mark.asyncio
 
-from src.MCP.client import MCPOllamaClient
+from src.LLM.client import MCPOllamaClient
 
-STDIO_CLIENT_PATH = "src.MCP.client.stdio_client"
-CLIENT_SESSION_PATH = "src.MCP.client.ClientSession"
+STDIO_CLIENT_PATH = "src.LLM.client.stdio_client"
+CLIENT_SESSION_PATH = "src.LLM.client.ClientSession"
 
 
 @pytest.fixture
@@ -24,8 +24,7 @@ def mocked_mcp_env():
 
 async def test_initialization():
     """Tests that the client initializes correctly."""
-    client = MCPOllamaClient(server_url="http://test.server")
-    assert client.http_client.base_url == "http://test.server"
+    client = MCPOllamaClient()
     assert len(client.chat_messages) == 1
     assert client.chat_messages[0]["role"] == "system"
     await client.cleanup()
@@ -34,10 +33,8 @@ async def test_initialization():
 async def test_cleanup(mocked_mcp_env):
     """Tests that the cleanup fucntion calls the close methods properly."""
     client = MCPOllamaClient()
-    client.http_client = AsyncMock()
     client.exit_stack = AsyncMock()
 
     await client.cleanup()
 
-    client.http_client.aclose.assert_awaited_once()
     client.exit_stack.aclose.assert_awaited_once()

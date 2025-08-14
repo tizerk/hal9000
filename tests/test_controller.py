@@ -2,7 +2,7 @@ import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch
 
-CLIENT_PATH = "src.MCP.controller.mcp_client"
+CLIENT_PATH = "src.LLM.controller.mcp_client"
 
 
 @pytest.fixture
@@ -11,7 +11,7 @@ def test_client():
     Pytest fixture that provides a TestClient with a mocked mcp_client.
     """
     with patch(CLIENT_PATH, spec=True) as mock_mcp_client:
-        from src.MCP.controller import app
+        from src.LLM.controller import app
 
         with TestClient(app) as client:
             yield client, mock_mcp_client

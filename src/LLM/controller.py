@@ -22,9 +22,7 @@ load_dotenv()
 USING_TOOLS = os.getenv("USING_TOOLS", "False").lower() in ("true", "1", "t")
 
 
-mcp_client = MCPOllamaClient(
-    server_url="http://127.0.0.1:8000", using_tools=USING_TOOLS
-)
+mcp_client = MCPOllamaClient(using_tools=USING_TOOLS)
 
 
 @asynccontextmanager
@@ -36,9 +34,9 @@ async def lifespan(app: FastAPI):
         logger.info("Tool mode is enabled. Connecting to MCP servers...")
         try:
             mcp_servers_scripts = [
-                f"{Path(__file__).parent}/mcp_servers/mcp_weather/server.py",
-                f"{Path(__file__).parent}/mcp_servers/mcp_time/server.py",
-                f"{Path(__file__).parent}/mcp_servers/mcp_websearch/server.py",
+                f"{Path(__file__).parent}/MCP/mcp_weather/server.py",
+                f"{Path(__file__).parent}/MCP/mcp_time/server.py",
+                f"{Path(__file__).parent}/MCP/mcp_websearch/server.py",
             ]
             await mcp_client.connect_to_mcp_servers(mcp_servers_scripts)
         except Exception as e:
@@ -50,7 +48,7 @@ async def lifespan(app: FastAPI):
     await mcp_client.cleanup()
 
 
-app = FastAPI(title="MCP Controller", lifespan=lifespan)
+app = FastAPI(title="MCP/LLM Controller", lifespan=lifespan)
 
 
 @app.post("/query")

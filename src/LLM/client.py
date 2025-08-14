@@ -1,7 +1,6 @@
 from contextlib import AsyncExitStack
 from typing import Any, Dict, List
 import re
-import httpx
 import os
 from dotenv import load_dotenv
 from mcp import ClientSession, StdioServerParameters
@@ -9,6 +8,7 @@ from mcp.client.stdio import stdio_client
 
 import logging
 from rich.logging import RichHandler
+from .llm_utils import generate_llm_response
 
 load_dotenv()
 
@@ -26,9 +26,7 @@ SYSTEM_PROMPT = "You are HAL 9000, the Heuristically programmed ALgorithmic comp
 class MCPOllamaClient:
     """Client for interacting with the Ollama server and MCP tools."""
 
-    def __init__(
-        self, server_url: str = "http://127.0.0.1:8000", using_tools: bool = True
-    ):
+    def __init__(self, using_tools: bool = True):
         """Initialize the Ollama/MCP client.
 
         Args:
@@ -39,7 +37,6 @@ class MCPOllamaClient:
         self.using_tools = using_tools
         self.tool_to_session: Dict[str, ClientSession] = {}
         self.exit_stack = AsyncExitStack()
-        self.http_client = httpx.AsyncClient(base_url=server_url, timeout=120.0)
         self.chat_messages: List[Dict[str, Any]] = [
             {"role": "system", "content": SYSTEM_PROMPT}
         ]
@@ -111,11 +108,7 @@ class MCPOllamaClient:
         self.chat_messages.append({"role": "user", "content": query})
         tools = await self.get_mcp_tools() if self.using_tools else None
 
-        http_response = await self.http_client.post(
-            "/generate", json={"messages": self.chat_messages, "tools": tools}
-        )
-        http_response.raise_for_status()
-        assistant_message = http_response.json()["response"]
+        assistant_message = generate_llm_response(self.chat_messages, tools)
         self.chat_messages.append(assistant_message)
 
         if assistant_message.get("tool_calls"):
@@ -134,11 +127,7 @@ class MCPOllamaClient:
                 )
             logger.info(f"Tool call result: {result.content[0].text}")
             logger.info("\nSending tool context to LLM for final response...")
-            final_response = await self.http_client.post(
-                "/generate", json={"messages": self.chat_messages, "tools": None}
-            )
-            final_response.raise_for_status()
-            final_assistant_message = final_response.json()["response"]
+            final_assistant_message = generate_llm_response(self.chat_messages, None)
             final_assistant_message["content"] = self._regex_clean(
                 final_assistant_message["content"]
             )
@@ -150,5 +139,4 @@ class MCPOllamaClient:
 
     async def cleanup(self):
         """Clean up resources and close connections gracefully."""
-        await self.http_client.aclose()
         await self.exit_stack.aclose()

@@ -33,7 +33,7 @@ from STT import STT
 from TTS import TTS
 
 headers = {"Content-Type": "application/json"}
-server_url = "http://127.0.0.1:8001"
+server_url = "http://127.0.0.1:8000"
 
 if __name__ == "__main__":
     tts_module = TTS(character="hal9000")
@@ -70,7 +70,7 @@ if __name__ == "__main__":
                 sys.exit(1)
             except requests.exceptions.ConnectionError:
                 logger.error(
-                    "No response from the FastAPI servers.  Make sure they are running."
+                    "No response from the FastAPI server.  Make sure it is running."
                 )
                 sys.exit(1)
     except KeyboardInterrupt:
