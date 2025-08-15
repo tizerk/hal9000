@@ -70,7 +70,7 @@ class STT:
         self.recording = True
 
         while not self._stop_event.is_set():
-            data = self.stream.read(1024)
+            data = self.stream.read(1024, exception_on_overflow=False)
             self.frames.append(data)
         self.recording = False
 
@@ -94,6 +94,7 @@ class STT:
 
     def close_stream(self) -> None:
         """Closes Pyaudio stream."""
-        self.stream.stop_stream()
-        self.stream.close()
+        if self.stream and self.stream.is_active():
+            self.stream.stop_stream()
+            self.stream.close()
         self.p.terminate()

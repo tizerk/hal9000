@@ -7,6 +7,8 @@ import logging
 from rich.console import Console
 from rich.logging import RichHandler
 
+from StyleTTS.utils import initialize_nltk
+
 load_dotenv()
 console = Console()
 
@@ -36,6 +38,7 @@ headers = {"Content-Type": "application/json"}
 server_url = "http://127.0.0.1:8000"
 
 if __name__ == "__main__":
+    initialize_nltk()
     tts_module = TTS(character="hal9000")
     gpu = torch.cuda.is_available()
     if gpu:
