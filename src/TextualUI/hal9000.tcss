@@ -1,0 +1,62 @@
+Screen {
+    background: #000000;
+    color: #e0e0e0;
+    layout: vertical;
+}
+
+Header {
+    background: #1a1a1a;
+    color: #ff0000;
+    text-style: bold;
+    dock: top;
+}
+
+Footer {
+    background: #1a1a1a;
+    color: #ff0000;
+    height: 1;
+    dock: bottom;
+}
+
+#main-container {
+    layout: grid;
+    grid-size: 2;
+    grid-columns: 1fr 3fr;
+    padding: 1;
+    grid-gutter: 1;
+}
+
+#status-panel {
+    border: solid #444444;
+    padding: 1;
+}
+
+#status-header {
+    content-align: center top;
+    text-style: bold underline;
+    margin-bottom: 1;
+}
+
+#status-display {
+    color: #e0e0e0;
+    margin-top: 1;
+}
+
+#status-display.listening {
+    color: #ff0000;
+    text-style: bold blink;
+}
+
+#status-display.thinking {
+    color: #fce803; /* Yellow */
+    text-style: bold;
+}
+
+#status-display.speaking {
+    color: #ff5555; /* Lighter red */
+}
+
+#conversation-log {
+    border: solid #444444;
+    padding: 0 1;
+}

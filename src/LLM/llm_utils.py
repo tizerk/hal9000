@@ -10,7 +10,7 @@ def generate_llm_response(
     and returns the assistant's response.
     """
     response = ollama.chat(
-        model="qwen3:latest", messages=messages, tools=tools, think=False, keep_alive=-1
+        model="qwen3:8b", messages=messages, tools=tools, think=False, keep_alive=-1
     )
 
     return response["message"]

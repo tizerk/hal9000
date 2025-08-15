@@ -34,9 +34,9 @@ async def lifespan(app: FastAPI):
         logger.info("Tool mode is enabled. Connecting to MCP servers...")
         try:
             mcp_servers_scripts = [
-                f"{Path(__file__).parent}/MCP/mcp_weather/server.py",
-                f"{Path(__file__).parent}/MCP/mcp_time/server.py",
-                f"{Path(__file__).parent}/MCP/mcp_websearch/server.py",
+                f"{Path(__file__).parent.parent}/MCP/mcp_weather/server.py",
+                f"{Path(__file__).parent.parent}/MCP/mcp_time/server.py",
+                f"{Path(__file__).parent.parent}/MCP/mcp_websearch/server.py",
             ]
             await mcp_client.connect_to_mcp_servers(mcp_servers_scripts)
         except Exception as e:
