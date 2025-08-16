@@ -26,7 +26,7 @@ SYSTEM_PROMPT = "You are HAL 9000, the Heuristically programmed ALgorithmic comp
 class MCPOllamaClient:
     """Client for interacting with the Ollama server and MCP tools."""
 
-    def __init__(self, using_tools: bool = True):
+    def __init__(self, using_tools: bool = False):
         """Initialize the Ollama/MCP client.
 
         Args:

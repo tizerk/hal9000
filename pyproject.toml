@@ -14,8 +14,7 @@ dependencies = [
     "munch>=4.0.0",
     "nltk>=3.9.1",
     "numba>=0.61.2",
-    "nvidia-cublas-cu12>=12.6.4.1",
-    "nvidia-cudnn-cu12==9.*",
+
     "ollama>=0.5.1",
     "phonemizer>=3.3.0",
     "pyaudio>=0.2.14",
