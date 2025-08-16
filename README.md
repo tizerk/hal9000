@@ -4,7 +4,7 @@
 
 This project brings HAL 9000 to life as a voice-driven AI assistant using a combination of real-time speech-to-text, a local large language model, MCP tooling, and finetuned text-to-speech inference.  HAL 9000 can run **100% offline.**
 
-![HAL 9000 TUI Demo](https://github.com/YOUR_USERNAME/YOUR_REPO/blob/main/assets/hal9000_demo.gif)
+https://github.com/user-attachments/assets/ce1078e7-2f38-4c6c-a0a4-2e07e44db11c
 
 ## Table of Contents
 - [HAL 9000](#hal-9000)
